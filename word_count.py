@@ -6,6 +6,33 @@ from datetime import datetime
 import argparse
 from PyPDF2 import PdfReader
 from docx import Document
+import subprocess
+import sys
+
+def create_virtualenv(env_name):
+    try:
+        subprocess.run([sys.executable, '-m', 'venv', env_name], check=True)
+        print(f"Virtual environment '{env_name}' created successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to create virtual environment '{env_name}': {e}")
+
+def install_package(env_name, package_name):
+    try:
+        subprocess.run([f'./{env_name}/bin/pip', 'install', package_name], check=True)
+        print(f"Package '{package_name}' installed successfully in virtual environment '{env_name}'.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install {package_name} in virtual environment '{env_name}': {e}")
+
+# Create a virtual environment
+env_name = 'myenv'
+create_virtualenv(env_name)
+
+# List of packages to install
+packages = ['python-docx', 'PyPDF2', 'pandas']
+
+# Install packages in the virtual environment
+for package in packages:
+    install_package(env_name, package)
 
 # Extract text from a PDF file
 def extract_text_from_pdf(file_path):
