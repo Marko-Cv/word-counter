@@ -26,20 +26,25 @@ def extract_text_from_word(file_path):
 # Get word counts from text
 def get_word_counts(text):
     # Split the text into words, excluding punctuation except for apostrophes and excluding numbers
-    words = re.findall(r"\b[a-zA-Z]+(?:'[a-zA-Z]+)?\b", text)
+    words = re.findall(r"\b[a-zA-Z]+(?:['-_][a-zA-Z]+)*\b", text)
     word_counts = Counter(words)
 
     # Convert the Counter object to a pandas DataFrame
     word_counts_df = pd.DataFrame(word_counts.items(), columns=['Word', 'Count'])
 
+    # Sort the DataFrame by word counts in descending order
+    word_counts_df = word_counts_df.sort_values(by='Word', ascending=True, key=lambda col: col.str.lower()).reset_index(
+        drop=True)
+
     return word_counts_df
 
 # Get phrase counts from text
 def get_phrase_counts(text, phrases):
-    # Return single count if input is a string
-    if isinstance(phrases, str):
-        count = text.count(phrases)
-        return count
+    # Skip if the list of phrases is empty
+    if len(phrases) == 0:
+        phrases_df = pd.DataFrame(columns=['Phrase', 'Count'])
+        print('No phrase count: Empty list of phrases')
+        return phrases_df
 
     # Convert the list of phrases to a DataFrame
     phrases_df = pd.DataFrame({'Phrase': phrases})
@@ -51,10 +56,13 @@ def get_phrase_counts(text, phrases):
     # Replace NaN values with 0
     phrases_df['Count'] = phrases_df['Count'].fillna(0).astype(int)
 
+    phrases_df = phrases_df.sort_values(by='Phrase', ascending=True, key=lambda col: col.str.lower()).reset_index(
+        drop=True)
+
     return phrases_df
 
 # Save word and phrase counts to CSV files
-def save_dataframes_to_csv(file_path, f_type, word_counts_df, phrases_df, want_words, want_phrases):
+def save_dataframes_to_csv(file_path, f_type, word_counts_df, phrases_df, want_words):
     # Generate timestamp for unique file names
     now = datetime.now()
     timestamp = now.strftime('%Y%m%d%H%M%S')
@@ -68,21 +76,22 @@ def save_dataframes_to_csv(file_path, f_type, word_counts_df, phrases_df, want_w
     # Save the DataFrames as CSV files
     if want_words:
         # Insert the file name as the first column
-        word_counts_df.insert(0, 'File name', base_name)
+        word_counts_df.insert(0, 'Source file name', base_name)
         # Save the word counts to a CSV file
         word_counts_df.to_csv(word_counts_file, index=False)
         # Print the file path where the word counts are saved
         print(f'{file_path} word counts saved to: {word_counts_file}')
-    if want_phrases:
+
+    if phrases_df.shape[0] != 0:
         # Insert the file name as the first column
-        phrases_df.insert(0, 'File name', base_name)
+        phrases_df.insert(0, 'Source file name', base_name)
         # Save the phrase counts to a CSV file
         phrases_df.to_csv(phrases_file, index=False)
         # Print the file path where the phrase counts are saved
         print(f'{file_path} phrase counts saved to: {phrases_file}')
 
 # Process a file
-def process_file(file_path, phrases_list=[], want_words=True, want_phrases=True):
+def process_file(file_path, phrases_list=[], want_words=True):
     # Check the file type and extract text
     if file_path.endswith('.pdf'):
         f_type = 'pdf'
@@ -99,21 +108,21 @@ def process_file(file_path, phrases_list=[], want_words=True, want_phrases=True)
     phrases_df = get_phrase_counts(text, phrases_list)
 
     # Save the word and phrase counts to CSV files
-    save_dataframes_to_csv(file_path, f_type, word_counts_df, phrases_df, want_words, want_phrases)
+    save_dataframes_to_csv(file_path, f_type, word_counts_df, phrases_df, want_words)
 
 # Process a folder
-def process_folder(folder_path, file_type, phrases_list=[], want_words=True, want_phrases=True):
+def process_folder(folder_path, file_type, phrases_list=[], want_words=True):
     # Traverse the folder and process each file
     for root, _, files in os.walk(folder_path):
 
         # Process each file based on the file type
         for file in files:
-            if file_type == 'pdf' and file.endswith('.pdf'):
-                process_file(os.path.join(root, file), phrases_list, want_words, want_phrases)
-            elif file_type == 'word' and file.endswith('.docx'):
-                process_file(os.path.join(root, file), phrases_list, want_words, want_phrases)
-            elif file_type == 'both' and (file.endswith('.pdf') or file.endswith('.docx')):
-                process_file(os.path.join(root, file), phrases_list, want_words, want_phrases)
+            if file_type == '1' and file.endswith('.pdf'):
+                process_file(os.path.join(root, file), phrases_list, want_words)
+            elif file_type == '2' and file.endswith('.docx'):
+                process_file(os.path.join(root, file), phrases_list, want_words)
+            elif file_type == '3' and (file.endswith('.pdf') or file.endswith('.docx')):
+                process_file(os.path.join(root, file), phrases_list, want_words)
 
 # Main function
 def main():
@@ -121,9 +130,8 @@ def main():
     parser = argparse.ArgumentParser(description='Process PDF and Word documents.')
 
     # Add arguments for phrases, want_words, and want_phrases
-    parser.add_argument('--phrases', nargs='*', default=[], help='List of phrases to count')
-    parser.add_argument('--want_words', action='store_true', help='Flag to save word counts')
-    parser.add_argument('--want_phrases', action='store_true', help='Flag to save phrase counts')
+    parser.add_argument('--p', nargs='*', default=[], help='List of phrases to count')
+    parser.add_argument('--w', action='store_true', help='Flag to save word counts')
     args = parser.parse_args()
 
     # Get the path of a file or folder
@@ -131,10 +139,10 @@ def main():
 
     # Process the file or folder based on the input
     if os.path.isfile(path):
-        process_file(path, args.phrases, args.want_words, args.want_phrases)
+        process_file(path, args.p, args.w)
     elif os.path.isdir(path):
-        file_type = input("Specify file type to analyze (pdf, word, both): ").lower()
-        process_folder(path, file_type, args.phrases, args.want_words, args.want_phrases)
+        file_type = input("Specify file type to analyze (1 for pdf, 2 for word, 3 for both): ")
+        process_folder(path, file_type, args.p, args.w)
     else:
         print("Invalid path")
 
