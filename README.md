@@ -15,11 +15,11 @@
 ## Usage
 1. Run one of the following:\
 a. To save a csv of word counts only:\
-`python3 word_count.py --w`\
+  `python3 word_count.py --w`\
 b. To save a csv of phrase counts only:\
-`python3 word_count.py --w 'phrase1' 'phrase2' 'etc'`\
+  `python3 word_count.py --w 'phrase1' 'phrase2' 'etc'`\
 c. To save both:\
-`python3 word_count.py --w --p 'phrase1' 'phrase2' 'etc'`
+  `python3 word_count.py --w --p 'phrase1' 'phrase2' 'etc'`
 2. When prompted, enter path to a single word/pdf file, or to a folder
 3. If path to a folder is entered: when prompted, specify whether to analyze PDFs (1), word docs (2), or both types (3)
 
