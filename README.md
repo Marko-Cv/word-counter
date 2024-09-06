@@ -8,14 +8,14 @@
 ``` 
 python3 create_virtualenv.py
 ```
-5. When prompted, enter desired name of the virtual environment
-6. Run the output text in Terminal, it should look like: `source /,../..`
-7. Run *install_packages.py*
+4. When prompted, enter desired name of the virtual environment
+5. Run the output text in Terminal, it should look like: `source /,../..`
+6. Run *install_packages.py*
 ```
 python3 install_packages.py
 ```
-9. When prompted, enter the previously entered name of the virtual environment
-10. To test, run:
+7. When prompted, enter the previously entered name of the virtual environment
+8. To test, run:
 ```
 python3 word_count.py
 ```
