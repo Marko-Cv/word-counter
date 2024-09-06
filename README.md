@@ -14,7 +14,7 @@
 
 ## Usage
 1. Run one of the following:\
-To save a csv of word counts only:\
+a. To save a csv of word counts only:\
 `python3 word_count.py --w`\
 b. To save a csv of phrase counts only:\
 `python3 word_count.py --w 'phrase1' 'phrase2' 'etc'`\
