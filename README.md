@@ -11,6 +11,9 @@
 7. Run *install_packages.py*\
 `python3 install_packages.py`
 9. When prompted, enter the previously entered name of the virtual environment
+10. To test, run:\
+`python3 word_count.py`\
+If you're prompted for an input, the setup process was completed successfully
 
 ## Usage
 1. Run one of the following:\
