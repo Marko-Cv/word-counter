@@ -25,6 +25,8 @@ c. To save both:\
 `python3 word_count.py --w --p 'phrase1' 'phrase2' 'etc'`
 3. When prompted, enter path to a single word/pdf file, or to a folder containing such files
 4. If folder path is entered: when prompted, specify whether to analyze PDFs (1), word docs (2), or both types (3)
+5. When finished using the script, deactivate the virtual environment:\
+`deactivate`
 
 
 
