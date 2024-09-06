@@ -23,7 +23,7 @@ If you're prompted for an input, the setup process was completed successfully
 
 ## Usage
 1. Run one of the following:\
-a. To save a CSV of word counts only:
+To save a CSV of word counts only:
 ```
 python3 word_count.py --w
 ```
