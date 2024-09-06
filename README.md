@@ -5,7 +5,9 @@
 1. Download *create_virtualenv.py*, *install_packages.py*, *word_count.py*
 2. In Terminal, navigate to the directory where these scripts are saved
 3. Run *create_virtualenv.py*\
-```python3 create_virtualenv.py```
+``` cmd
+python3 create_virtualenv.py
+```
 5. When prompted, enter desired name of the virtual environment
 6. Run the output text in Terminal, it should look like: `source /,../..`
 7. Run *install_packages.py*\
